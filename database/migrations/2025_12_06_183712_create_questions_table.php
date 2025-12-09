@@ -16,15 +16,16 @@ return new class extends Migration
             $table->foreignId('exam_section_id')->nullable()->constrained()->nullOnDelete();
 
             $table->enum('question_type', [
-                'single_choice',
-                'multiple_choice',
-                'text',
-                'essay',
-                'audio_mc',
-                'video_response',
-                'fill_blank',
-                'matching',
-            ])->default('single_choice');
+                'single_choice',   // MCQ, one correct
+                'multiple_choice', // MCQ, multiple correct
+                'fill_blank',      // fill in the gaps
+                'short_text',      // short written answer
+                'long_text',       // essay / long writing
+                'speaking',        // user records voice (repeat, describe, etc.)
+                'listening',       // user listens, then answers (text or choice)
+                'reorder',         // reorder words/sentences
+                'matching',        // match pairs
+            ]);
 
             $table->text('question_text');
             $table->string('media_url')->nullable();

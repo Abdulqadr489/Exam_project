@@ -3,64 +3,45 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Http\Controllers\Controller;
+use App\Models\Exams\Exam;
 use App\Models\Payments\Payment;
 use Illuminate\Http\Request;
+use Rawahamid\FibIntegration\Payments\FibPayment;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function createPayment(Request $request, Exam $exam)
     {
-        //
+        $amount = $exam->price;
+
+        $fib = FibPayment::create($amount);
+
+        $payment = Payment::create([
+            'user_id' => auth()->id(),
+            'exam_id' => $exam->id,
+            'amount' => $amount,
+            'fib_payment_id' => $fib['paymentId'],
+            'status' => 'UNPAID',
+            'raw_response' => $fib
+        ]);
+
+        return [
+            'payment' => $payment,
+            'fib' => $fib
+        ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function fibCallback(Request $request)
     {
-        //
-    }
+        $payment = Payment::where('fib_payment_id', $request->paymentId)->first();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($payment) {
+            $payment->update([
+                'status' => $request->status == "PAID" ? "PAID" : "FAILED",
+                'callback_data' => $request->all()
+            ]);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        return response()->json(["ok" => true]);
     }
 }

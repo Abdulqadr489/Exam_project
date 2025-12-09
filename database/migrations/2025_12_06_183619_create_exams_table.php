@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('exam_type_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('price')->nullable();
             $table->integer('duration')->nullable(); // in minutes
             $table->timestamps();
             $table->softDeletes();

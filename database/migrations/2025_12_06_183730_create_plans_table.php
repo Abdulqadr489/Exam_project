@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name');                // PTE Plan, IELTS Plan...
             $table->integer('price_iqd');
             $table->integer('duration_days')->default(30);
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-            $table->index(['name', 'price_iqd', 'duration_days']);
         });
     }
 

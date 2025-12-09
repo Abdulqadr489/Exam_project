@@ -3,6 +3,7 @@
 namespace App\Models\Payments;
 
 use App\Models\Exams\Exam;
+use App\Models\Plans\Plan;
 use App\Models\SoftDeletes;
 use App\Models\User;
 use App\Models\UserExam;
@@ -11,7 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'user_id', 'exam_id', 'fib_payment_id',
         'fib_transaction_id', 'amount', 'status',
@@ -19,8 +21,8 @@ class Payment extends Model
     ];
 
     protected $casts = [
-        'raw_request'   => 'array',
-        'raw_response'  => 'array',
+        'raw_request' => 'array',
+        'raw_response' => 'array',
         'callback_data' => 'array'
     ];
 
@@ -29,13 +31,13 @@ class Payment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
     public function exam()
     {
         return $this->belongsTo(Exam::class);
-    }
-
-    public function userExam()
-    {
-        return $this->hasOne(UserExam::class);
     }
 }
